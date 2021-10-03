@@ -146,7 +146,11 @@ names_df =
   mutate(ethnicity = str_to_lower(ethnicity)) %>% 
   mutate(childs_first_name = str_to_lower(childs_first_name)) %>% 
   distinct()
+```
 
+Producing a table showing the rank in popularity of the name “Olivia” as a female baby name over time.
+
+```{r}
 #create a table showing the rank in popularity of the name “Olivia” over time
 olivia_df = 
   filter(names_df, childs_first_name == "olivia") %>% 
@@ -158,7 +162,11 @@ olivia_df =
   )
 
 olivia_df
+```
 
+Producing a table showing the most popular name among male children over time.
+
+```{r}
 #create a table showing the most popular name among male children over time
 most_male_df= 
   filter(names_df, gender == "male", rank == 1) %>% 
@@ -170,5 +178,16 @@ most_male_df=
   )
 
 most_male_df
+```
+
+Producing a scatter plot for male, white non-hispanic children born in 2016.
+
+```{r}
+#filter the dataset
+scatter_df =
+  filter(names_df, gender == "male", year_of_birth == 2016, ethnicity == "white non hispanic")
+
+#produce a scatter plot
+ggplot(scatter_df, aes(x = rank, y = count)) + geom_point()
 ```
 
