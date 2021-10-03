@@ -19,8 +19,30 @@ mr_trash_wheel_df =
   read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N408") %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
-  mutate(sports_balls = round(sports_balls))
+  mutate(sports_balls = round(sports_balls)) 
 
 mr_trash_wheel_df
+```
+
+Reading precipitation data for 2018 and 2019.
+
+```{r}
+pre_18_df = 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  mutate(year = 2018) %>% 
+  relocate(year)
+
+pre_19_df = 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  mutate(year = 2019) %>% 
+  relocate(year)
+
+precipitation_df = 
+  bind_rows(pre_18_df, pre_19_df) %>% 
+  mutate(month = rep(month.name, 2))
+
+precipitation_df
 ```
 
