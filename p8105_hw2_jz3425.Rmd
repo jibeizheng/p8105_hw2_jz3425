@@ -28,21 +28,28 @@ Reading precipitation data for 2018 and 2019.
 
 ```{r}
 pre_18_df = 
-  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", range = "A2:B14") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", range = "A2:B15") %>% 
   janitor::clean_names() %>% 
   mutate(year = 2018) %>% 
   relocate(year)
 
 pre_19_df = 
-  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", range = "A2:B14") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", range = "A2:B15") %>% 
   janitor::clean_names() %>% 
   mutate(year = 2019) %>% 
   relocate(year)
 
 precipitation_df = 
   bind_rows(pre_18_df, pre_19_df) %>% 
-  mutate(month = rep(month.name, 2))
+  mutate(month = c(month.name, NA, month.name, NA))
 
 precipitation_df
 ```
 
+The Mr. Trash Wheel dataset includes data of `r nrow(mr_trash_wheel_df)` dumpsters from `r min(pull(mr_trash_wheel_df, year))`-`r max(pull(mr_trash_wheel_df, year))`. Data include `r names(mr_trash_wheel_df[5:6])` of trash and categories of trash: `r names(mr_trash_wheel_df[7:14])`.
+
+The precipitation dataset lists the precipitation for each month in 2018 and 2019. The data of last 6 months of 2019 is missing. 
+
+The total precipitation in 2018 is `r precipitation_df[13,3]`.
+
+The median number of sports balls in a dumpster in 2019 is `r median(pull(mr_trash_wheel_df, sports_balls))`.
