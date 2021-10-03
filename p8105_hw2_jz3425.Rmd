@@ -61,7 +61,7 @@ The median number of sports balls in a dumpster in 2019 is `r median(pull(mr_tra
 
 Reading pols-month dataset.
 
-```{r}
+```{r message = FALSE}
 #read pols_month data and separate the date variable
 pols_month_df = 
   read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -83,7 +83,7 @@ pols_month_df
 
 Reading snp dataset.
 
-```{r}
+```{r message = FALSE}
 #read and clean snp data
 snp_df = 
   read_csv("data/fivethirtyeight_datasets/snp.csv") %>% 
@@ -99,7 +99,7 @@ snp_df
 
 Reading unemployment dataset.
 
-```{r}
+```{r message = FALSE}
 #read and clean unemployment dadta
 unemp_df = 
   read_csv("data/fivethirtyeight_datasets/unemployment.csv", col_names = c("year", month.name), skip = 1) %>% 
@@ -115,7 +115,7 @@ unemp_df
 
 Join the datasets.
 
-```{r}
+```{r message = FALSE}
 #join plos_month_df and snp_df
 temp = left_join(pols_month_df, snp_df)
 
@@ -125,3 +125,10 @@ final_df = left_join(temp, unemp_df)
 final_df
 ```
 
+The "pols_month_df" dataset contains `r nrow(pols_month_df)` observations of `r ncol(pols_month_df)` variables related to the number of national politicians who are democratic or republican at any given time from `r min(pull(pols_month_df, year))`-`r max(pull(pols_month_df, year))`.
+
+The "snp_df" dataset contains `r nrow(snp_df)` observatiosn of `r ncol(snp_df)` variables related to Standard & Poor’s stock market index from `r min(pull(snp_df, year))`-`r max(pull(snp_df, year))`.
+
+The "unemp_df" dataset contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables related to the percentage of unemployment in each month from `r min(pull(unemp_df, year))`-`r max(pull(unemp_df, year))`.
+
+The "final_df" dataset joins these three datasets and contains `r nrow(final_df)` observations of `r ncol(final_df)` variables including president, snp index, percentage of unemployment, from `r min(pull(final_df, year))`-`r max(pull(final_df, year))`.
