@@ -80,3 +80,18 @@ pols_month_df =
 pols_month_df
 ```
 
+Reading snp dataset.
+
+```{r}
+#read and clean snp data
+snp_df = 
+  read_csv("data/fivethirtyeight_datasets/snp.csv") %>% 
+  separate(date, into = c("year", "month", "day"), "/") %>% 
+  mutate(year = as.numeric(year) + 2000) %>% 
+  mutate(month = as.numeric(month)) %>% 
+  mutate(month = month.name[month]) %>% 
+  select(-day)
+
+snp_df
+```
+
