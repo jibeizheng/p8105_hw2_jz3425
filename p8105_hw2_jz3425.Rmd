@@ -61,7 +61,7 @@ The median number of sports balls in a dumpster in 2019 is `r median(pull(mr_tra
 
 Reading pols-month dataset.
 
-```{r message = FALSE}
+```{r, message = FALSE}
 #read pols_month data and separate the date variable
 pols_month_df = 
   read_csv("data/fivethirtyeight_datasets/pols-month.csv") %>% 
@@ -83,7 +83,7 @@ pols_month_df
 
 Reading snp dataset.
 
-```{r message = FALSE}
+```{r, message = FALSE}
 #read and clean snp data
 snp_df = 
   read_csv("data/fivethirtyeight_datasets/snp.csv") %>% 
@@ -99,7 +99,7 @@ snp_df
 
 Reading unemployment dataset.
 
-```{r message = FALSE}
+```{r, message = FALSE}
 #read and clean unemployment dadta
 unemp_df = 
   read_csv("data/fivethirtyeight_datasets/unemployment.csv", col_names = c("year", month.name), skip = 1) %>% 
@@ -115,7 +115,7 @@ unemp_df
 
 Join the datasets.
 
-```{r message = FALSE}
+```{r, message = FALSE}
 #join plos_month_df and snp_df
 temp = left_join(pols_month_df, snp_df)
 
@@ -132,3 +132,43 @@ The "snp_df" dataset contains `r nrow(snp_df)` observatiosn of `r ncol(snp_df)` 
 The "unemp_df" dataset contains `r nrow(unemp_df)` observations of `r ncol(unemp_df)` variables related to the percentage of unemployment in each month from `r min(pull(unemp_df, year))`-`r max(pull(unemp_df, year))`.
 
 The "final_df" dataset joins these three datasets and contains `r nrow(final_df)` observations of `r ncol(final_df)` variables including president, snp index, percentage of unemployment, from `r min(pull(final_df, year))`-`r max(pull(final_df, year))`.
+
+## Problem 3
+
+Reading the popular baby names dataset.
+
+```{r, message = FALSE}
+#read and clean popular baby names dataset
+names_df =
+  read_csv("data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(gender = str_to_lower(gender)) %>% 
+  mutate(ethnicity = str_to_lower(ethnicity)) %>% 
+  mutate(childs_first_name = str_to_lower(childs_first_name)) %>% 
+  distinct()
+
+#create a table showing the rank in popularity of the name “Olivia” over time
+olivia_df = 
+  filter(names_df, childs_first_name == "olivia") %>% 
+  arrange(year_of_birth) %>% 
+  select(ethnicity, year_of_birth, rank) %>% 
+  pivot_wider(
+    names_from = "year_of_birth",
+    values_from = "rank"
+  )
+
+olivia_df
+
+#create a table showing the most popular name among male children over time
+most_male_df= 
+  filter(names_df, gender == "male", rank == 1) %>% 
+  arrange(year_of_birth) %>% 
+  select(-gender, -rank, -count) %>% 
+  pivot_wider(
+    names_from = "year_of_birth",
+    values_from = "childs_first_name"
+  )
+
+most_male_df
+```
+
