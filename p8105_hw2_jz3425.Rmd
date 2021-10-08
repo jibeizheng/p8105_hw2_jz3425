@@ -5,7 +5,7 @@ date: 10/2/2021
 output: github_document
 ---
 
-```{r, echo = FALSE, message = FALSE}
+```{r, message = FALSE}
 library(tidyverse)
 library(readxl)
 ```
@@ -17,7 +17,7 @@ Reading Mr. Trash Wheel dataset.
 ```{r, warning = FALSE}
 #read Mr. Trash Wheel data set and clean
 mr_trash_wheel_df = 
-  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N408") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "Mr. Trash Wheel", range = "A2:N534") %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
   mutate(sports_balls = round(sports_balls)) 
@@ -30,13 +30,13 @@ Reading precipitation data for 2018 and 2019.
 ```{r}
 #read precipitation data and create year variable
 pre_18_df = 
-  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2018 Precipitation", range = "A2:B15") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "2018 Precipitation", range = "A2:B15") %>% 
   janitor::clean_names() %>% 
   mutate(year = 2018) %>% 
   relocate(year)
 
 pre_19_df = 
-  read_excel("data/Trash-Wheel-Collection-Totals-8-6-19.xlsx", sheet = "2019 Precipitation", range = "A2:B15") %>% 
+  read_excel("data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx", sheet = "2019 Precipitation", range = "A2:B15") %>% 
   janitor::clean_names() %>% 
   mutate(year = 2019) %>% 
   relocate(year)
@@ -51,7 +51,7 @@ precipitation_df
 
 The Mr. Trash Wheel dataset includes `r nrow(mr_trash_wheel_df)` dumpsters and `r ncol(mr_trash_wheel_df)` variables from `r min(pull(mr_trash_wheel_df, year))`-`r max(pull(mr_trash_wheel_df, year))`. Data include `r names(mr_trash_wheel_df[5:6])` of trash and categories of trash: `r names(mr_trash_wheel_df[7:14])`.
 
-The precipitation dataset lists the precipitation for each month in 2018 and 2019. The data of last 6 months of 2019 is missing. 
+The precipitation dataset lists the precipitation for each month in 2018 and 2019. 
 
 The total precipitation in 2018 is `r precipitation_df[13,3]`.
 
@@ -71,12 +71,10 @@ pols_month_df =
   mutate(year = as.numeric(year))
 
 #create president variable
-pres = factor(c("dem", "gop"))
+prez = factor(c("gop", "dem"))
 pols_month_df = 
-  mutate(pols_month_df, president = pres[prez_gop + 1]) %>% 
-  select(-prez_gop) %>% 
-  select(-prez_dem) %>% 
-  select(-day)
+  mutate(pols_month_df, president = prez[prez_dem + 1]) %>% 
+  select(-prez_gop, -prez_dem, -day)
 
 pols_month_df
 ```
@@ -86,9 +84,23 @@ Reading snp dataset.
 ```{r, message = FALSE}
 #read and clean snp data
 snp_df = 
-  read_csv("data/fivethirtyeight_datasets/snp.csv") %>% 
+  read_csv("data/fivethirtyeight_datasets/snp.csv")
+
+snp_df_1 = snp_df[-c(176:787),] %>% 
   separate(date, into = c("year", "month", "day"), "/") %>% 
+  mutate(year = as.numeric(year) + 2000)
+
+snp_df_2 = snp_df[-c(1:175, 188:787),] %>% 
+  separate(date, into = c("month", "day", "year"), "/") %>% 
   mutate(year = as.numeric(year) + 2000) %>% 
+  relocate(year)
+
+snp_df_3 = snp_df[-c(1:187),] %>% 
+  separate(date, into = c("month", "day", "year"), "/") %>% 
+  mutate(year = as.numeric(year) + 1900) %>% 
+  relocate(year)
+
+snp_df = bind_rows(snp_df_1, snp_df_2, snp_df_3) %>% 
   mutate(month = as.numeric(month)) %>% 
   arrange(year, month) %>% 
   mutate(month = month.name[month]) %>% 
